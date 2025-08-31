@@ -1,0 +1,35 @@
+<li class="px-4 py-4 sm:px-6" id="{{ lead.id }}" role="listitem">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">{{ lead.email }}</div>
+                <div class="text-sm text-gray-500">
+                    {% match lead.source %}
+                    {% when Some with (s) %}Source: {{ s }}{% when None %}Direct{% endmatch %}
+                </div>
+                <div class="text-sm text-gray-500">
+                    {% match lead.message %}
+                    {% when Some with (m) %}Message: {{ m }}{% when None %}{% endmatch %}
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-sm text-gray-500">
+                Score: <span class="font-medium">{% match lead.score %}{% when Some with (sc) %}{{ sc }}{% when None %}N/A{% endmatch %}</span>
+            </div>
+            <div class="text-sm text-gray-500">{{ lead.formatted_date }}</div>
+            <div class="flex space-x-2">
+                <button type="button" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium" hx-get="/api/leads/{{ lead.id }}/edit" hx-target="closest li" hx-swap="innerHTML" aria-label="Edit lead {{ lead.email }}">Edit <span class="htmx-indicator" aria-hidden="true">…</span></button>
+                <button type="button" class="text-red-600 hover:text-red-900 text-sm font-medium" hx-delete="/api/leads/{{ lead.id }}" hx-target="closest li" hx-swap="outerHTML" hx-confirm="Delete this lead?" aria-label="Delete lead {{ lead.email }}">Delete <span class="htmx-indicator" aria-hidden="true">…</span></button>
+            </div>
+        </div>
+    </div>
+</li>
+

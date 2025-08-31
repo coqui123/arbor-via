@@ -1,0 +1,9 @@
+<form hx-put="/api/links/{{ link.id }}" hx-target="closest li" hx-swap="outerHTML" aria-label="Edit link {{ link.label }}">
+    <input type="hidden" name="id" value="{{ link.id }}">
+    <label class="sr-only" for="edit-label-{{ link.id }}">Label</label>
+    <input id="edit-label-{{ link.id }}" type="text" name="label" value="{{ link.label }}" required autofocus>
+    <label class="sr-only" for="edit-url-{{ link.id }}">URL</label>
+    <input id="edit-url-{{ link.id }}" type="url" name="url" value="{{ link.url }}" required placeholder="https://example.com">
+    <button type="submit">Save <span class="htmx-indicator" aria-hidden="true">…</span></button>
+    <button type="button" hx-get="/api/links/{{ link.id }}" hx-target="closest li" hx-swap="outerHTML">Cancel</button>
+</form>

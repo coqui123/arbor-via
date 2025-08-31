@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-6">
+                {% match avatar_url %}
+                {% when Some with (u) %}
+                <img src="{{ u }}" alt="{{ display_name }} avatar" class="w-24 h-24 rounded-full object-cover shadow-lg" />
+                {% when None %}
+                <div class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center shadow-lg">
+                    <span class="text-2xl font-bold text-indigo-600">★</span>
+                </div>
+                {% endmatch %}
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ display_name }}</h1>
+            {% match bio %}
+            {% when Some with (b) %}
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ b }}</p>
+            {% when None %}
+            {% endmatch %}
+        </div>
+
+        <!-- Links Section -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
+            <ul id="links-list" role="list" class="divide-y divide-gray-200" aria-label="Links list">
+                {% for link in links %}
+                    {% include "partials/link.html" %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Lead Capture Form -->
+        <div class="bg-white shadow-sm rounded-lg p-6 mb-8">
+            <div class="text-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Join my list</h3>
+                <p class="text-gray-600">Get updates in your inbox. No spam, unsubscribe anytime.</p>
+            </div>
+            <form hx-post="/api/lead/{{ frogol_id }}" hx-target="#lead-capture-result" hx-swap="innerHTML" class="max-w-md mx-auto">
+                <div class="space-y-4">
+                    <div>
+                        <label for="lead-email" class="sr-only">Email</label>
+                        <input id="lead-email" 
+                               type="email" 
+                               name="email" 
+                               placeholder="you@example.com" 
+                               required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <input type="hidden" name="source" value="frogol">
+                    <div>
+                        <label for="lead-message" class="sr-only">Message</label>
+                        <textarea id="lead-message" 
+                                  name="message" 
+                                  placeholder="Add a short message (optional)" 
+                                  rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" 
+                                class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                            Subscribe
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id="lead-capture-result" class="mt-4"></div>
+        </div>
+
+        <!-- Admin Form (only shown if user is logged in) -->
+        <div class="admin-form bg-white shadow-sm rounded-lg p-6" style="display: none;">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Link</h3>
+            <form hx-post="/api/frogol/{{ slug }}/links" hx-target="#links-list" hx-swap="beforeend" class="space-y-4">
+                <div>
+                    <input type="text" 
+                           name="label" 
+                           placeholder="Link Label" 
+                           required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <input type="url" 
+                           name="url" 
+                           placeholder="https://example.com" 
+                           required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <button type="submit" 
+                            class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Add Link
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Apply theme attribute to <body> for CSS variables
+    (function() {
+        var theme = "{{ theme }}";
+        if (theme && theme.length > 0) {
+            document.body.setAttribute('data-theme', theme);
+        }
+    })();
+    
+    // Show admin form if user is logged in
+    var isAuthed = document.cookie.includes('auth_token');
+    if (isAuthed) {
+        var adminForm = document.querySelector('.admin-form');
+        if (adminForm) adminForm.style.display = 'block';
+        // Reveal admin controls per link
+        document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = 'block'; });
+    }
+</script>
+{% endblock %}

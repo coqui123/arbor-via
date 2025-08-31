@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100">
+  <div class="max-w-7xl mx-auto py-10 px-4">
+    <h1 class="text-2xl font-bold mb-6">Analytics</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-4 rounded shadow"><div class="text-gray-500 text-sm">Frogols</div><div class="text-xl">{{ total_frogols }}</div></div>
+      <div class="bg-white p-4 rounded shadow"><div class="text-gray-500 text-sm">Links</div><div class="text-xl">{{ total_links }}</div></div>
+      <div class="bg-white p-4 rounded shadow"><div class="text-gray-500 text-sm">Leads</div><div class="text-xl">{{ total_leads }}</div></div>
+      <div class="bg-white p-4 rounded shadow"><div class="text-gray-500 text-sm">Clicks</div><div class="text-xl">{{ total_clicks }}</div></div>
+    </div>
+    <div class="bg-white rounded shadow">
+      <div class="px-6 py-4 border-b"><h2 class="font-medium">Top Performing Frogols</h2></div>
+      <ul class="divide-y">
+        {% for f in top_frogols %}
+        <li class="px-6 py-4 flex justify-between">
+          <div>
+            <div class="font-medium">{{ f.display_name }}</div>
+            <div class="text-gray-500 text-sm">/{{ f.slug }}</div>
+          </div>
+          <div class="text-sm text-gray-600 flex gap-4">
+            <span>{{ f.total_links }} links</span>
+            <span>{{ f.total_leads }} leads</span>
+            <span>{{ f.total_clicks }} clicks</span>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100">
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Breadcrumb / Back -->
+        <div class="px-4 py-2 sm:px-0">
+            <a href="/dashboard" class="text-indigo-600 hover:text-indigo-800 text-sm">&larr; Back to Dashboard</a>
+        </div>
+        <!-- Header -->
+        <div class="px-4 py-6 sm:px-0">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        {% match frogol.avatar_url %}
+                        {% when Some with (u) %}
+                        <img src="{{ u }}" alt="{{ frogol.display_name }} avatar" class="w-16 h-16 rounded-full object-cover shadow-lg" />
+                        {% when None %}
+                        <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center shadow-lg">
+                            <span class="text-2xl font-bold text-indigo-600">★</span>
+                        </div>
+                        {% endmatch %}
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">{{ frogol.display_name }}</h1>
+                        <p class="mt-1 text-sm text-gray-600">/{{ frogol.slug }}</p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="/{{ frogol.slug }}" target="_blank" class="bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
+                        View Page
+                    </a>
+                    <a href="/dashboard/frogol/{{ frogol.id }}/edit" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">
+                        Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Links</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ links_count }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Leads</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ leads_count }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.122 2.122"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Clicks</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ click_stats.total_clicks }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Theme</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ frogol.theme }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links Section -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+            <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Links</h3>
+                <form class="flex gap-2" hx-post="/api/frogol/{{ frogol.slug }}/links" hx-headers='{"X-View":"dashboard"}' hx-target="#links-list" hx-swap="beforeend" hx-on:htmx:afterRequest="this.reset()" hx-disabled-elt="button[type='submit']" aria-label="Add new link">
+                    <input type="url" name="url" placeholder="https://example.com" class="border rounded px-2 py-1" required>
+                    <input type="text" name="label" placeholder="Label" class="border rounded px-2 py-1" required>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Add Link <span class="htmx-indicator" aria-hidden="true">…</span></button>
+                </form>
+            </div>
+            <ul id="links-list" class="divide-y divide-gray-200 sortable" role="list" aria-label="Links list"
+                hx-put="/api/links/order"
+                hx-trigger="reordered"
+                hx-include="#links-list [name='id']"
+                hx-swap="none">
+                {% for link in links %}
+                {% set clicks = link.clicks %}
+                {% include "dashboard/partials/link.html" %}
+                {% endfor %}
+            </ul>
+
+        </div>
+
+        <!-- Leads Section -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Leads</h3>
+            </div>
+            <ul class="divide-y divide-gray-200" id="leads-list" role="list" aria-label="Leads list">
+                {% for lead in leads %}
+                {% include "dashboard/partials/lead.html" %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,25 @@
+<form hx-put="/api/leads/{{ lead.id }}" hx-target="closest li" hx-swap="outerHTML" aria-label="Edit lead {{ lead.email }}">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+        <div>
+            <label class="sr-only" for="lead-email-{{ lead.id }}">Email</label>
+            <input id="lead-email-{{ lead.id }}" type="email" name="email" value="{{ lead.email }}" required class="border rounded px-2 py-1 w-full" autofocus>
+        </div>
+        <div>
+            <label class="sr-only" for="lead-source-{{ lead.id }}">Source</label>
+            <input id="lead-source-{{ lead.id }}" type="text" name="source" value="{% match lead.source %}{% when Some with (s) %}{{ s }}{% when None %}{% endmatch %}" class="border rounded px-2 py-1 w-full" placeholder="source">
+        </div>
+        <div>
+            <label class="sr-only" for="lead-score-{{ lead.id }}">Score</label>
+            <input id="lead-score-{{ lead.id }}" type="number" name="score" value="{% match lead.score %}{% when Some with (sc) %}{{ sc }}{% when None %}{% endmatch %}" class="border rounded px-2 py-1 w-full" placeholder="score">
+        </div>
+        <div class="md:col-span-4">
+            <label class="sr-only" for="lead-message-{{ lead.id }}">Message</label>
+            <textarea id="lead-message-{{ lead.id }}" name="message" class="border rounded px-2 py-1 w-full" rows="2" placeholder="message">{% match lead.message %}{% when Some with (m) %}{{ m }}{% when None %}{% endmatch %}</textarea>
+        </div>
+    </div>
+    <div class="mt-2 flex gap-2">
+        <button type="submit" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">Save <span class="htmx-indicator" aria-hidden="true">…</span></button>
+        <button type="button" hx-get="/api/leads/{{ lead.id }}" hx-target="closest li" hx-swap="outerHTML" class="text-sm text-gray-600">Cancel</button>
+    </div>
+</form>
+

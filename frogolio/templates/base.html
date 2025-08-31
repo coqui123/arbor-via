@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frogolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="/static/css/themes.css">
+    <style>
+        /* htmx indicator helpers */
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+    <script>
+        // Ensure a CSRF token cookie exists for HTMX double-submit protection
+        (function ensureCsrfCookie(){
+            var m = document.cookie.match(/(?:^|; )csrf_token=([^;]*)/);
+            if (!m) {
+                try {
+                    var array = new Uint8Array(16);
+                    (window.crypto || window.msCrypto).getRandomValues(array);
+                    var token = Array.prototype.map.call(array, function(b){ return ('0'+b.toString(16)).slice(-2); }).join('');
+                    document.cookie = 'csrf_token=' + token + '; Path=/; SameSite=Lax';
+                } catch (_) {
+                    var fallback = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+                    document.cookie = 'csrf_token=' + fallback + '; Path=/; SameSite=Lax';
+                }
+            }
+        })();
+        function refreshOrders(list) {
+            if (!list) return;
+            Array.prototype.forEach.call(list.children || [], function(li, index) {
+                var orderEl = li.querySelector('.link-order');
+                if (orderEl) {
+                    orderEl.textContent = String(index + 1);
+                }
+            });
+        }
+        // Link hover glow cursor tracking
+        document.addEventListener('pointermove', function(e){
+            document.querySelectorAll('.btn-link').forEach(function(el){
+                var rect = el.getBoundingClientRect();
+                var x = ((e.clientX - rect.left) / rect.width) * 100;
+                var y = ((e.clientY - rect.top) / rect.height) * 100;
+                el.style.setProperty('--x', x + '%');
+                el.style.setProperty('--y', y + '%');
+            });
+        }, { passive: true });
+
+        // Configure htmx to send CSRF token if present in cookies
+        if (window.htmx) {
+            document.body.addEventListener('htmx:configRequest', function(evt) {
+                var token = (document.cookie.match(/(?:^|; )csrf_token=([^;]*)/)||[])[1];
+                if (token) {
+                    evt.detail.headers['X-CSRF-Token'] = decodeURIComponent(token);
+                }
+            });
+        }
+
+        htmx.onLoad(function(content) {
+            var sortables = content.querySelectorAll(".sortable");
+            for (var i = 0; i < sortables.length; i++) {
+                var sortable = sortables[i];
+                new Sortable(sortable, {
+                    animation: 150,
+                    ghostClass: 'blue-background-class',
+                    handle: '.drag-handle',
+                    // Jiggle the element when sorting
+                    onChoose: function (evt) {
+                        evt.item.classList.add("jiggle");
+                    },
+                    onUnchoose: function (evt) {
+                        evt.item.classList.remove("jiggle");
+                    },
+                    onEnd: function (evt) {
+                        // Announce new position for screen readers
+                        var pos = Array.prototype.indexOf.call(evt.from.children, evt.item) + 1;
+                        evt.item.setAttribute('aria-live', 'polite');
+                        evt.item.setAttribute('aria-label', 'Moved to position ' + pos);
+                        // Update visible order numbers locally for better UX
+                        refreshOrders(evt.from);
+                        // Trigger a custom event that each <li> listens to for auto-save
+                        htmx.trigger(evt.from, 'reordered');
+                    }
+                });
+                // Ensure orders are accurate on initial load
+                refreshOrders(sortable);
+            }
+        })
+
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            var target = evt.target;
+            if (!target) return;
+            if (target.classList && target.classList.contains('sortable')) {
+                refreshOrders(target);
+            }
+            var list = document.querySelector('#links-list.sortable');
+            if (list) refreshOrders(list);
+        });
+    </script>
+</body>
+</html>
