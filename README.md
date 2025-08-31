@@ -1,5 +1,7 @@
 # Arbor Via
 
+<img width="1666" height="1488" alt="image" src="https://github.com/user-attachments/assets/a244a016-2dd0-4a23-87d4-3501dc7cd780" />
+
 A modern link-in-bio and lead-capture platform built with Rust.
 
 ## 🚀 Quick Start
