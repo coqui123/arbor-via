@@ -2,6 +2,8 @@
 
 Frogolio is a production-ready Rust web application that lets creators publish personal link hubs—called *frogols*—while silently capturing click-stream analytics and qualified leads. Built with Axum, Askama, HTMX, and SQLx, it provides a complete solution for creators to manage their online presence and grow their audience.
 
+<img width="2288" height="1334" alt="Screenshot 2025-08-30 211434" src="https://github.com/user-attachments/assets/c5648477-17b6-4139-be5a-2b56eae6fc5c" />
+
 ## 🚀 Features
 
 ### Core Functionality
